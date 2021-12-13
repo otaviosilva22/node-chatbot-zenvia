@@ -2,8 +2,9 @@
   "name": "node-chatbot-zenvia",
   "version": "1.0.0",
   "description": "Chatbot para reconhecimento de músicas.",
-  "main": "index.js",
+  "main": "src/index.js",
   "scripts": {
+    "start": "node src/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -18,9 +19,10 @@
   },
   "homepage": "https://github.com/otaviosilva22/node-chatbot-zenvia#readme",
   "dependencies": {
-    "config": "^3.3.6",
+    "@zenvia/sdk": "^2.1.0",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
-    "got": "^12.0.0"
+    "form-data": "^4.0.0",
+    "got": "^11.8.2"
   }
 }
