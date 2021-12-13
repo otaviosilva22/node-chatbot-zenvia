@@ -2,6 +2,7 @@ const dotenv = require('dotenv');
 const got = require('got');
 const FormData = require('form-data');
 const { Client, FileContent, TextContent, WebhookController } = require('@zenvia/sdk');
+const {getLyric} = require('./services/getLyrics');
 
 dotenv.config();
 
@@ -9,11 +10,13 @@ const client = new Client(process.env.ZENVIA_TOKEN);
 
 const whatsapp = client.getChannel('whatsapp');
 
+  
 const webhook = new WebhookController({
   channel: 'whatsapp',
+  
   messageEventHandler: async (messageEvent) => {
     let content = [new TextContent('Testado')];
-
+    
     if (messageEvent.message.contents[0].type === 'file' && messageEvent.message.contents[0].fileMimeType.includes('audio')) {
       const music = await recognizeMusic(messageEvent.message.contents[0].fileUrl);
 
@@ -27,6 +30,12 @@ const webhook = new WebhookController({
         }
         if (music.album) {
           text = `${text}Álbum: *${music.album}*\n`;
+        }
+        if (music.title && music.artist){
+          const vagalume_response = getLyric();
+          if (vagalume_response.type === "exact")
+            text = `${text}Letra: *${vagalume_response.mus[0].text}*\n`;
+         
         }
         content = [new TextContent(text)];
         if (music.deezer && music.deezer.picture) {
@@ -45,6 +54,7 @@ const webhook = new WebhookController({
       console.debug('Response:', response);
     });
   },
+  
 });
 
 webhook.on('listening', () => {
