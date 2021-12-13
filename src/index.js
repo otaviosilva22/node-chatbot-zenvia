@@ -32,8 +32,8 @@ const webhook = new WebhookController({
           text = `${text}Álbum: *${music.album}*\n`;
         }
         if (music.title && music.artist){
-          const vagalume_response = getLyric();
-          if (vagalume_response.type === "exact")
+          const vagalume_response = await getLyric(music.title, music.artist);
+          if (vagalume_response.type == "exact")
             text = `${text}Letra: *${vagalume_response.mus[0].text}*\n`;
          
         }

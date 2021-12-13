@@ -3,7 +3,7 @@ const dotenv = require('dotenv');
 
 const {URL_VAGALUME} = require('../common/constants');
 
-function getLyric (mus, art){
+async function getLyric (mus, art){
   dotenv.config();
 
   var config = {
