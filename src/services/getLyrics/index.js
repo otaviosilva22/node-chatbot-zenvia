@@ -1,9 +1,9 @@
 var axios = require('axios');
 const dotenv = require('dotenv');
 
-const {URL_VAGALUME} = require('../common/constants');
+const {URL_VAGALUME} = require('../../common/constants');
 
-async function getLyric (mus, art){
+module.exports = (mus, art) => {
   dotenv.config();
 
   var config = {
@@ -17,7 +17,7 @@ async function getLyric (mus, art){
     }
   };
   
-  const response_data = axios(config)
+  const reponseData = axios(config)
   .then(function (response) {
     console.log(response.data);
     return response.data;
@@ -26,9 +26,6 @@ async function getLyric (mus, art){
     console.log(error);
   });
   
-  return response_data;
+  return reponseData;
 }
 
-module.exports = {
-  getLyric
-}
