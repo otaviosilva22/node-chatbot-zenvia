@@ -2,10 +2,9 @@ const { TextContent } = require('@zenvia/sdk');
 
 const { updateUser, deleteUser, createUser } = require('../database/db');
 const getLyrics = require('../services/getLyrics');
-
 const { getSound } = require('../services/getSound');
-
 const { Status } = require('../common/constants');
+const { isInputOfAudio } = require('../common/utils');
 
 const getMenu = () => {
   const menu = `
@@ -30,7 +29,7 @@ async function proximoPasso(user, input) {
       user.status = Status.WAIT_ARTIST_NAME_TYPE_SEARCH;
       updateUser(user);
       let menu = 'Como você gostaria de encontrar a letra da música?\n' +
-        "*1* - Audio com trecho da música" +
+        "*1* - Audio com trecho da música\n" +
         "*2* - Nome do artista e nome da música";
       return new TextContent(menu);
     }
@@ -52,9 +51,7 @@ async function proximoPasso(user, input) {
     return [new TextContent(getMenu())];
   }
   else if (
-    user.status === Status.WAIT_MUSIC_EX
-    && input.type === 'file'
-    && input.fileMimeType.includes('audio')) {
+    user.status === Status.WAIT_MUSIC_EX && isInputOfAudio(input)) {
     deleteUser(user.cellphone);
     let resultArray = await getSound(input.fileUrl);
     
@@ -86,8 +83,9 @@ async function proximoPasso(user, input) {
           `
         );
       }
-      return new TextContent(`Não foi possivel encontar a musica que você procura 😕\n
-      Mas não se preocupe voce pode tentar de novo 🙂`);      
+      let elseMsg = 'Não foi possivel encontrar a música que você procura 😕' +
+      '\nMas não se preocupe voce pode tentar de novo 🙂'
+      return new TextContent(elseMsg);      
 
     }else {
       return new TextContent('Não te entendi, pode enviar novamente o nome do artista?');
@@ -109,14 +107,9 @@ async function proximoPasso(user, input) {
     
   }
   else if (user.status === Status.WAIT_SOUND_EX) {
-    if (
-      input.type === 'file'
-      && input.fileMimeType.includes('audio')) {
+    if (isInputOfAudio(input)) {
       deleteUser(user.cellphone);
-      
       let result = await getSound(input.fileUrl);
-    
-    
       return result;
     } else {
       return new TextContent('Não consegui entender, tenha certeza de enviar um aúdio com o trecho da música!')
