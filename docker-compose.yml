@@ -1,0 +1,33 @@
+version: '3.4'
+services:
+  
+  zenvia_db:
+    image: mysql:5.7
+    container_name: zenvia_db
+    environment:
+      MYSQL_ROOT_PASSWORD: zenviapassword
+      MYSQL_DATABASE: zenvia_db
+    ports:
+      - "3306:3306"
+    networks:
+      - zenvia_network
+  
+  zenvia_app:
+    image: luisfellipe/zenvia_app
+    depends_on:
+      - "zenvia_db"
+    build:
+      dockerfile: ./docker/node.dockerfile
+      context: .
+    volumes:
+      - "./:/var/www"
+    ports:
+      - "3000:3000"
+    container_name: zenvia_app
+    networks:
+      - zenvia_network
+
+networks:
+  zenvia_network:
+   driver: bridge
+
