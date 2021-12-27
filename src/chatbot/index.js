@@ -1,4 +1,5 @@
 const { TextContent } = require('@zenvia/sdk');
+var axios = require('axios');
 
 const { updateUser, deleteUser, createUser } = require('../database/db');
 const getLyrics = require('../services/getLyrics');
@@ -8,11 +9,12 @@ const { isInputOfAudio } = require('../common/utils');
 
 const getMenu = () => {
   const menu = `
-  *Escolha uma das opções abaixo:*\n
-  *1* - Encontar uma musica com amostra\n
-  *2* - Encontrar letra de uma Musica\n
-  *3* - Listar musicas por autor\n
-  *4* - Encerrar conversa
+  *Escolha uma das opções abaixo 👇*\n
+  *1* - Encontrar música com um trecho de exemplo\n
+  *2* - Encontrar letra de uma música\n
+  *3* - Listar músicas por cantor\n
+  *4* - Encontrar música pelo nome\n
+  *5* - Encerrar conversa
   `
   return menu;
 }
@@ -30,17 +32,22 @@ async function proximoPasso(user, input) {
       updateUser(user);
       let menu = 'Como você gostaria de encontrar a letra da música?\n' +
         "*1* - Audio com trecho da música\n" +
-        "*2* - Nome do artista e nome da música";
+        "*2* - Nome cantor(a) ou banda e nome da música";
       return new TextContent(menu);
     }
     else if (input.text === '3') {
-      user.status = Status.WAIT_AUTHOR
+      user.status = Status.SEARCH_MUSICS_BY_AUTHOR_NAME
       updateUser(user);
-      return [new TextContent('Certo, me envie o nome do autor que você procura')];
+      return [new TextContent('Certo, e qual é o nome do cantor(a) ou banda ... ? 🙂')];
     }
     else if (input.text === '4') {
+      user.status = Status.SEARCH_MUSIC_BY_NAME;
+      updateUser(user);
+      return [new TextContent('Certo, e qual é o nome da musica?')];
+    }
+    else if (input.text === '5') {
       deleteUser(user.cellphone);
-      return [new TextContent('Certo, muito obrigado pela visita, volte sempre!')];
+      return [new TextContent('Certo, muito obrigado pela visita, volte sempre! 👋😉')];
     }
   }
   
@@ -114,6 +121,28 @@ async function proximoPasso(user, input) {
     } else {
       return new TextContent('Não consegui entender, tenha certeza de enviar um aúdio com o trecho da música!')
     }
+  }
+  else if (user.status === Status.SEARCH_MUSICS_BY_AUTHOR_NAME) {
+    const params = new URLSearchParams();
+    params.append('q', input.text);
+    params.append('limit', 5)
+    let result = await axios.get('https://api.vagalume.com.br/search.art', {
+      headers: { 
+        "Content-Type": "application/x-www-form-urlencoded"
+      },
+      data: JSON.stringify({
+        q: input.text,
+        limit: 5
+      })
+    }).catch((error) => console.log(error));
+    console.log(result)
+
+    if (result.status === 'success') {
+      return new TextContent(result);
+    } 
+    deleteUser(user);
+    return new TextContent("Não conseguir encontrar uma musica com esse nome 😕\n"
+    + "Mas não se desanime você pode tentar novamente com uma outra música 😊");
   }
   else if (user.status === Status.WAIT_ARTIST_NAME) {
     

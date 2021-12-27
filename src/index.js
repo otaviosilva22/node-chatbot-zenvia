@@ -14,8 +14,6 @@ const webhook = new WebhookController({
   channel: 'whatsapp',
   
   messageEventHandler: async (messageEvent) => {
-   //console.log(JSON.stringify(messageEvent));
-   // let content = [new TextContent('ola!')];
     let content = [];
     let user = await findUser(messageEvent.message.from);
     if (user) {
@@ -24,7 +22,6 @@ const webhook = new WebhookController({
       user = {
         cellphone: messageEvent.message.from,
         nome: messageEvent.message.visitor.name,
-        input: 'void',
         artista: 'null',
         musica: 'null',
         status: Status.FIRST_INPUT,
@@ -37,7 +34,7 @@ const webhook = new WebhookController({
     whatsapp.sendMessage(messageEvent.message.to, messageEvent.message.from, ...content)
     .then((response) => {
       console.debug('Response:', response);
-    });
+    }).catch((error) => console.log('Lembra de configurar o novo token do webhook zenvia no .env', error));
   },
   
 }); 
