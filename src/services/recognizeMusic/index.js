@@ -2,6 +2,7 @@ const got = require('got');
 const FormData = require('form-data');
 
 module.exports = async (url) => {
+  console.log('url', url)
   const form = new FormData();
   form.append('api_token', process.env.AUDD_TOKEN);
   form.append('url', url);
@@ -12,7 +13,7 @@ module.exports = async (url) => {
     responseType: 'json',
     resolveBodyOnly: true,
   });
-
+  console.log('response', response)
   if (response && response.result) {
     return {
       artist: response.result.artist,

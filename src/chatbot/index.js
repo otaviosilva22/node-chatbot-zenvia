@@ -28,7 +28,7 @@ async function proximoPasso(user, input) {
     }
     else if (input.text === '2') {
 
-      user.status = Status.WAIT_ARTIST_NAME_TYPE_SEARCH;
+      user.status = Status.WAIT_TYPE_SEARCH;
       updateUser(user);
       let menu = 'Como você gostaria de encontrar a letra da música?\n' +
         "*1* - Audio com trecho da música\n" +
@@ -93,12 +93,8 @@ async function proximoPasso(user, input) {
       let elseMsg = 'Não foi possivel encontrar a música que você procura 😕' +
       '\nMas não se preocupe voce pode tentar de novo 🙂'
       return new TextContent(elseMsg);      
-
-    }else {
-      return new TextContent('Não te entendi, pode enviar novamente o nome do artista?');
     }
-    
-  } else if (user.status === Status.WAIT_ARTIST_NAME_TYPE_SEARCH) {
+  } else if (user.status === Status.WAIT_TYPE_SEARCH) {
     if (input.text === '1') {
       user.status = Status.WAIT_SOUND_EX;
       updateUser(user);

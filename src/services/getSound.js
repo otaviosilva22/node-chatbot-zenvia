@@ -6,22 +6,23 @@ const getLyrics = require('../services/getLyrics');
 async function getSound(fileUrl) {
   
   const music = await recognizeMusic(fileUrl);
+  console.log(music);
   let content = []
   if (music) {
     let text = '';
     if (music.artist) {
-      text = `${text}Artista: *${music.artist}*\n`;
+      text = `${text}*Artista:* ${music.artist}\n`;
     }
     if (music.title) {
-      text = `${text}Título: *${music.title}*\n`;
+      text = `${text}*Título:* ${music.title}\n`;
     }
     if (music.album) {
-      text = `${text}Álbum: *${music.album}*\n`;
+      text = `${text}*Álbum:* ${music.album}\n`;
     }
     if (music.title && music.artist){
       const vagalume_response = await getLyrics(music.title, music.artist);
-      if (vagalume_response.type == "exact")
-        text = `${text}Letra: *${vagalume_response.mus[0].text}*\n`;
+      if (vagalume_response.type == "exact" || vagalume_response.type == "aprox")
+        text = `${text}*Letra:* \n${vagalume_response.mus[0].text}\n`;
       
     }
     content.push(new TextContent(text))
