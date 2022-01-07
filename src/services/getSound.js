@@ -3,7 +3,7 @@ const { TextContent, FileContent } = require('@zenvia/sdk');
 const recognizeMusic = require('../services/recognizeMusic');
 const getLyrics = require('../services/getLyrics');
 
-async function getSound(fileUrl) {
+async function getSound(fileUrl, lyricsValidation) {
   
   const music = await recognizeMusic(fileUrl);
   console.log(music);
@@ -19,7 +19,7 @@ async function getSound(fileUrl) {
     if (music.album) {
       text = `${text}*Álbum:* ${music.album}\n`;
     }
-    if (music.title && music.artist){
+    if (music.title && music.artist && lyricsValidation === true){
       const vagalume_response = await getLyrics(music.title, music.artist);
       if (vagalume_response.type == "exact" || vagalume_response.type == "aprox")
         text = `${text}*Letra:* \n${vagalume_response.mus[0].text}\n`;

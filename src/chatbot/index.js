@@ -12,9 +12,7 @@ const getMenu = () => {
   *Escolha uma das opções abaixo 👇*\n
   *1* - Encontrar música com um trecho de exemplo\n
   *2* - Encontrar letra de uma música\n
-  *3* - Listar músicas por cantor\n
-  *4* - Encontrar música pelo nome\n
-  *5* - Encerrar conversa
+  *3* - Encerrar conversa
   `
   return menu;
 }
@@ -36,16 +34,6 @@ async function proximoPasso(user, input) {
       return new TextContent(menu);
     }
     else if (input.text === '3') {
-      user.status = Status.SEARCH_MUSICS_BY_AUTHOR_NAME
-      updateUser(user);
-      return [new TextContent('Certo, e qual é o nome do cantor(a) ou banda ... ? 🙂')];
-    }
-    else if (input.text === '4') {
-      user.status = Status.SEARCH_MUSIC_BY_NAME;
-      updateUser(user);
-      return [new TextContent('Certo, e qual é o nome da musica?')];
-    }
-    else if (input.text === '5') {
       deleteUser(user.cellphone);
       return [new TextContent('Certo, muito obrigado pela visita, volte sempre! 👋😉')];
     }
@@ -60,7 +48,7 @@ async function proximoPasso(user, input) {
   else if (
     user.status === Status.WAIT_MUSIC_EX && isInputOfAudio(input)) {
     deleteUser(user.cellphone);
-    let resultArray = await getSound(input.fileUrl);
+    let resultArray = await getSound(input.fileUrl, false);
     
     return resultArray;
   }
@@ -112,7 +100,7 @@ async function proximoPasso(user, input) {
   else if (user.status === Status.WAIT_SOUND_EX) {
     if (isInputOfAudio(input)) {
       deleteUser(user.cellphone);
-      let result = await getSound(input.fileUrl);
+      let result = await getSound(input.fileUrl, true);
       return result;
     } else {
       return new TextContent('Não consegui entender, tenha certeza de enviar um aúdio com o trecho da música!')
