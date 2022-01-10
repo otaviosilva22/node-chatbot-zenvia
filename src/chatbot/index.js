@@ -8,28 +8,29 @@ const { Status } = require('../common/constants');
 const { isInputOfAudio } = require('../common/utils');
 
 const getMenu = () => {
-  const menu = `
-  *Escolha uma das opções abaixo 👇*\n
-  *1* - Encontrar música com um trecho de exemplo\n
-  *2* - Encontrar letra de uma música\n
-  *3* - Encerrar conversa
-  `
+  const menu = "*Escolha uma das opções abaixo 👇*\n" +
+"*1* - Encontrar música com um trecho de exemplo\n" +
+"*2* - Encontrar letra de uma música\n" +
+"*3* - Encerrar conversa"
+
   return menu;
 }
+
+contTentativas = 0;
 //return content[]
 async function proximoPasso(user, input) {
   if (user.status === Status.MAIN_MENU) {
     if (input.text === '1') {
       user.status = Status.WAIT_MUSIC_EX
       updateUser(user);
-      return [new TextContent('Certo, me envie uma amostra de no minimo 5 segundos que encontro sua musica 😊')];
+      return [new TextContent('Certo, me envie uma amostra de áudio de no minimo 5 segundos que encontro sua musica 😊')];
     }
     else if (input.text === '2') {
 
       user.status = Status.WAIT_TYPE_SEARCH;
       updateUser(user);
       let menu = 'Como você gostaria de encontrar a letra da música?\n' +
-        "*1* - Audio com trecho da música\n" +
+        "*1* - Áudio com trecho da música\n" +
         "*2* - Nome cantor(a) ou banda e nome da música";
       return new TextContent(menu);
     }
@@ -78,8 +79,17 @@ async function proximoPasso(user, input) {
           `
         );
       }
-      let elseMsg = 'Não foi possivel encontrar a música que você procura 😕' +
-      '\nMas não se preocupe voce pode tentar de novo 🙂'
+
+      let elseMSg;
+      contTentativas++;
+      if (contTentativas < 3){
+        elseMsg = 'Não foi possivel encontrar a música que você procura 😕' +
+        '\nMas não se preocupe voce pode tentar de novo 🙂'
+      }else{
+        elseMsg = 'Desculpe, não foi possivel encontrar a música que você procura 😕' +
+        '\nEstou encerrando este atendimento.'
+        deleteUser(user);
+      }
       return new TextContent(elseMsg);      
     }
   } else if (user.status === Status.WAIT_TYPE_SEARCH) {
