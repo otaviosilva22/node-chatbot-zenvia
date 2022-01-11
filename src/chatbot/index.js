@@ -12,7 +12,7 @@ const getMenu = () => {
 "*1* - Encontrar música com um trecho de exemplo\n" +
 "*2* - Encontrar letra de uma música\n" +
 "*3* - Encerrar conversa"
-
+  
   return menu;
 }
 
@@ -20,8 +20,10 @@ contTentativas = 0;
 //return content[]
 async function proximoPasso(user, input) {
   if (user.status === Status.MAIN_MENU) {
+    user.tentativas = 0;
     if (input.text === '1') {
       user.status = Status.WAIT_MUSIC_EX
+      
       updateUser(user);
       return [new TextContent('Certo, me envie uma amostra de áudio de no minimo 5 segundos que encontro sua musica 😊')];
     }
@@ -81,14 +83,16 @@ async function proximoPasso(user, input) {
       }
 
       let elseMSg;
-      contTentativas++;
-      if (contTentativas < 3){
+      user.tentativas++;
+      user.musica = 'null';
+      updateUser(user);
+      if (user.tentativas < 3){
         elseMsg = 'Não foi possivel encontrar a música que você procura 😕' +
         '\nMas não se preocupe voce pode tentar de novo 🙂'
       }else{
         elseMsg = 'Desculpe, não foi possivel encontrar a música que você procura 😕' +
         '\nEstou encerrando este atendimento.'
-        deleteUser(user);
+        deleteUser(user.cellphone);
       }
       return new TextContent(elseMsg);      
     }
