@@ -120,6 +120,7 @@ async function proximoPasso(user, input) {
       return new TextContent('Não consegui entender, tenha certeza de enviar um aúdio com o trecho da música!')
     }
   }
+  /*
   else if (user.status === Status.SEARCH_MUSICS_BY_AUTHOR_NAME) {
     const params = new URLSearchParams();
     params.append('q', input.text);
@@ -141,7 +142,7 @@ async function proximoPasso(user, input) {
     deleteUser(user);
     return new TextContent("Não conseguir encontrar uma musica com esse nome 😕\n"
     + "Mas não se desanime você pode tentar novamente com uma outra música 😊");
-  }
+  }*/
   else if (user.status === Status.WAIT_ARTIST_NAME) {
     
   }

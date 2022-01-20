@@ -1,0 +1,7 @@
+*.md
+*.png
+*.jpg
+*.jpeg
+
+assets/
+/node_modules/
