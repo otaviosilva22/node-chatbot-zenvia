@@ -110,6 +110,12 @@ Os novos tokens devem ser setados no arquivo `.env` na raiz do projeto comforme 
 <img src="./assets/zenvia-12.png">
 </br></br>
 
+## Tecnologias utilizadas
+
+</br></br>
+<img src="./assets/tecnologias.png">
+</br></br>
+
 <hr>
 
 Essa aplicação foi desenvolvida com a colaboração de:
@@ -120,4 +126,4 @@ Essa aplicação foi desenvolvida com a colaboração de:
 
 [Marcos Andrade](https://github.com/MarcosP-Andrade)
 
-[Ótavio Silva](https://github.com/otaviosilva22)
+[Otávio Silva](https://github.com/otaviosilva22)
