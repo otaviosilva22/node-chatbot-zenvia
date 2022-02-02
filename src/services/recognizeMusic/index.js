@@ -13,7 +13,6 @@ module.exports = async (url) => {
     responseType: 'json',
     resolveBodyOnly: true,
   });
-  console.log('response', response)
   if (response && response.result) {
     return {
       artist: response.result.artist,

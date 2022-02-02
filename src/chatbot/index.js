@@ -8,44 +8,35 @@ const { Status } = require('../common/constants');
 const { isInputOfAudio } = require('../common/utils');
 
 const getMenu = () => {
-  const menu = `
-  *Escolha uma das opções abaixo 👇*\n
-  *1* - Encontrar música com um trecho de exemplo\n
-  *2* - Encontrar letra de uma música\n
-  *3* - Listar músicas por cantor\n
-  *4* - Encontrar música pelo nome\n
-  *5* - Encerrar conversa
-  `
+  const menu = "*Escolha uma das opções abaixo 👇*\n" +
+"*1* - Encontrar música com um trecho de exemplo\n" +
+"*2* - Encontrar letra de uma música\n" +
+"*3* - Encerrar conversa"
+  
   return menu;
 }
+
+contTentativas = 0;
 //return content[]
 async function proximoPasso(user, input) {
   if (user.status === Status.MAIN_MENU) {
+    user.tentativas = 0;
     if (input.text === '1') {
       user.status = Status.WAIT_MUSIC_EX
+      
       updateUser(user);
-      return [new TextContent('Certo, me envie uma amostra de no minimo 5 segundos que encontro sua musica 😊')];
+      return [new TextContent('Certo, me envie uma amostra de áudio de no minimo 5 segundos que encontro sua musica 😊')];
     }
     else if (input.text === '2') {
 
       user.status = Status.WAIT_TYPE_SEARCH;
       updateUser(user);
       let menu = 'Como você gostaria de encontrar a letra da música?\n' +
-        "*1* - Audio com trecho da música\n" +
+        "*1* - Áudio com trecho da música\n" +
         "*2* - Nome cantor(a) ou banda e nome da música";
       return new TextContent(menu);
     }
     else if (input.text === '3') {
-      user.status = Status.SEARCH_MUSICS_BY_AUTHOR_NAME
-      updateUser(user);
-      return [new TextContent('Certo, e qual é o nome do cantor(a) ou banda ... ? 🙂')];
-    }
-    else if (input.text === '4') {
-      user.status = Status.SEARCH_MUSIC_BY_NAME;
-      updateUser(user);
-      return [new TextContent('Certo, e qual é o nome da musica?')];
-    }
-    else if (input.text === '5') {
       deleteUser(user.cellphone);
       return [new TextContent('Certo, muito obrigado pela visita, volte sempre! 👋😉')];
     }
@@ -60,7 +51,7 @@ async function proximoPasso(user, input) {
   else if (
     user.status === Status.WAIT_MUSIC_EX && isInputOfAudio(input)) {
     deleteUser(user.cellphone);
-    let resultArray = await getSound(input.fileUrl);
+    let resultArray = await getSound(input.fileUrl, false);
     
     return resultArray;
   }
@@ -90,8 +81,19 @@ async function proximoPasso(user, input) {
           `
         );
       }
-      let elseMsg = 'Não foi possivel encontrar a música que você procura 😕' +
-      '\nMas não se preocupe voce pode tentar de novo 🙂'
+
+      let elseMSg;
+      user.tentativas++;
+      user.musica = 'null';
+      updateUser(user);
+      if (user.tentativas < 3){
+        elseMsg = 'Não foi possivel encontrar a música que você procura 😕' +
+        '\nMas não se preocupe voce pode tentar de novo 🙂'
+      }else{
+        elseMsg = 'Desculpe, não foi possivel encontrar a música que você procura 😕' +
+        '\nEstou encerrando este atendimento.'
+        deleteUser(user.cellphone);
+      }
       return new TextContent(elseMsg);      
     }
   } else if (user.status === Status.WAIT_TYPE_SEARCH) {
@@ -112,12 +114,13 @@ async function proximoPasso(user, input) {
   else if (user.status === Status.WAIT_SOUND_EX) {
     if (isInputOfAudio(input)) {
       deleteUser(user.cellphone);
-      let result = await getSound(input.fileUrl);
+      let result = await getSound(input.fileUrl, true);
       return result;
     } else {
       return new TextContent('Não consegui entender, tenha certeza de enviar um aúdio com o trecho da música!')
     }
   }
+  /*
   else if (user.status === Status.SEARCH_MUSICS_BY_AUTHOR_NAME) {
     const params = new URLSearchParams();
     params.append('q', input.text);
@@ -139,7 +142,7 @@ async function proximoPasso(user, input) {
     deleteUser(user);
     return new TextContent("Não conseguir encontrar uma musica com esse nome 😕\n"
     + "Mas não se desanime você pode tentar novamente com uma outra música 😊");
-  }
+  }*/
   else if (user.status === Status.WAIT_ARTIST_NAME) {
     
   }
