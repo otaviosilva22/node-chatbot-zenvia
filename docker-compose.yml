@@ -13,7 +13,6 @@ services:
       - zenvia_network
   
   zenvia_app:
-    image: luisfellipe/zenvia_app
     depends_on:
       - "zenvia_db"
     build:
